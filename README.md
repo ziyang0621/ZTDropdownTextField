@@ -6,7 +6,7 @@
  * [Features](#features)
  * [Demo](#demo)
  * [Installation](#installation)
-    * [Cocoapods](#cocoapods)
+    * [CocoaPods](#cocoapods)
     * [Source files](#source-files)
     * [Example](#example)
  * [Usage](#usage)
@@ -42,7 +42,7 @@ Slide Animation  | Expand Animation | Flip Animation
 
 ## Installation
 
-### Cocoapods
+### CocoaPods
 
 [CocoaPods](http://www.cocoapods.org) recommended to use ZTDropDownTextField.
 
