@@ -44,7 +44,7 @@ class MapViewDemoViewController: UIViewController {
         
         geocoder.geocodeAddressString(textField.text!, in: region, completionHandler: { (placemarks, error) -> Void in
             if error != nil {
-                print(error)
+                print(error ?? "No Error Message")
             } else {
                 self.placemarkList.removeAll(keepingCapacity: false)
                 self.placemarkList = placemarks! as [CLPlacemark]
