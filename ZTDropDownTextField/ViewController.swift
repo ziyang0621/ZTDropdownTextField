@@ -23,26 +23,26 @@ class ViewController: UIViewController {
 }
 
 extension UIViewController: UITableViewDelegate {
-    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            let simpleDemoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("SimpleDemoViewController") as! SimpleDemoViewController
-            showViewController(simpleDemoVC, sender: self)
+            let simpleDemoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SimpleDemoViewController") as! SimpleDemoViewController
+            show(simpleDemoVC, sender: self)
         } else {
-            let mapViewDemoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("MapViewDemoViewController") as! MapViewDemoViewController
-            showViewController(mapViewDemoVC, sender: self)
+            let mapViewDemoVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewDemoViewController") as! MapViewDemoViewController
+            show(mapViewDemoVC, sender: self)
         }
     }
 }
 
 extension ViewController: UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 2
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("mainCell")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: "mainCell")
         if cell == nil {
-            cell = UITableViewCell(style: .Default, reuseIdentifier: "mainCell")
+            cell = UITableViewCell(style: .default, reuseIdentifier: "mainCell")
         }
         
         if indexPath.row == 0 {
