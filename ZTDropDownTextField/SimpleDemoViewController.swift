@@ -28,8 +28,8 @@ class SimpleDemoViewController: UIViewController {
         navigationItem.title = "Simple Demo"
         
         fullAddressTextField.dataSourceDelegate = self
-        fullAddressTextField.animationStyle = .Flip
-        fullAddressTextField.addTarget(self, action: #selector(SimpleDemoViewController.fullAddressTextDidChanged(_:)), forControlEvents:.EditingChanged)
+        fullAddressTextField.animationStyle = .flip
+        fullAddressTextField.addTarget(self, action: #selector(SimpleDemoViewController.fullAddressTextDidChanged(_:)), for:.editingChanged)
     }
     
     override func didReceiveMemoryWarning() {
@@ -39,42 +39,42 @@ class SimpleDemoViewController: UIViewController {
     
     
     // MARK: Address Helper Mehtods
-    func fullAddressTextDidChanged(textField: UITextField) {
+    func fullAddressTextDidChanged(_ textField: UITextField) {
         
         if textField.text!.isEmpty {
-            placemarkList.removeAll(keepCapacity: false)
+            placemarkList.removeAll(keepingCapacity: false)
             fullAddressTextField.dropDownTableView.reloadData()
             return
         }
         
-        geocoder.geocodeAddressString(textField.text!, inRegion: region, completionHandler: { (placemarks, error) -> Void in
+        geocoder.geocodeAddressString(textField.text!, in: region, completionHandler: { (placemarks, error) -> Void in
             if error != nil {
-                print(error)
+                print(error ?? "No Error")
             } else {
-                self.placemarkList.removeAll(keepCapacity: false)
+                self.placemarkList.removeAll(keepingCapacity: false)
                 self.placemarkList = placemarks! as [CLPlacemark]
                 self.fullAddressTextField.dropDownTableView.reloadData()
             }
         })
     }
     
-    private func formateedFullAddress(placemark: CLPlacemark) -> String {
+    fileprivate func formateedFullAddress(_ placemark: CLPlacemark) -> String {
         let lines = ABCreateStringWithAddressDictionary(placemark.addressDictionary!, false)
-        let addressString = lines.stringByReplacingOccurrencesOfString("\n", withString: ", ", options: .LiteralSearch, range: nil)
+        let addressString = lines.replacingOccurrences(of: "\n", with: ", ", options: .literal, range: nil)
         return addressString
     }
     
 }
 
 extension SimpleDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int {
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int {
         return placemarkList.count
     }
     
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = dropDownTextField.dropDownTableView.dequeueReusableCellWithIdentifier("addressCell")
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell {
+        var cell = dropDownTextField.dropDownTableView.dequeueReusableCell(withIdentifier: "addressCell")
         if cell == nil {
-            cell = UITableViewCell(style: .Default, reuseIdentifier: "addressCell")
+            cell = UITableViewCell(style: .default, reuseIdentifier: "addressCell")
         }
         
         cell!.textLabel!.text = formateedFullAddress(placemarkList[indexPath.row])
@@ -83,7 +83,7 @@ extension SimpleDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
         return cell!
     }
     
-    func dropDownTextField(dropdownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func dropDownTextField(_ dropdownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: IndexPath) {
         fullAddressTextField.text = formateedFullAddress(placemarkList[indexPath.row])
         addressSummaryTextView.text = formateedFullAddress(placemarkList[indexPath.row])
     }
