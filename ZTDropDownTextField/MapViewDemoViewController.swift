@@ -35,7 +35,6 @@ class MapViewDemoViewController: UIViewController {
     
     // MARK: Address Helper Mehtods
     func fullAddressTextDidChanged(_ textField: UITextField) {
-        
         if textField.text!.isEmpty {
             placemarkList.removeAll(keepingCapacity: false)
             fullAddressTextField.dropDownTableView.reloadData()
@@ -96,7 +95,7 @@ extension MapViewDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         annotation.title = formateedFullAddress(placeMark)
-        
+        self.fullAddressTextField.text = annotation.title
         mapView.addAnnotation(annotation)
     }
 }
