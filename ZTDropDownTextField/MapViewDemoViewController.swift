@@ -25,37 +25,36 @@ class MapViewDemoViewController: UIViewController {
         
         navigationItem.title = "Map View Demo"
 
-        view.bringSubviewToFront(fullAddressTextField)
+        view.bringSubview(toFront: fullAddressTextField)
         
         fullAddressTextField.delegate = self
         fullAddressTextField.dataSourceDelegate = self
-        fullAddressTextField.animationStyle = .Slide
-        fullAddressTextField.addTarget(self, action: #selector(MapViewDemoViewController.fullAddressTextDidChanged(_:)), forControlEvents:.EditingChanged)
+        fullAddressTextField.animationStyle = .slide
+        fullAddressTextField.addTarget(self, action: #selector(MapViewDemoViewController.fullAddressTextDidChanged(_:)), for:.editingChanged)
     }
     
     // MARK: Address Helper Mehtods
-    func fullAddressTextDidChanged(textField: UITextField) {
-        
+    func fullAddressTextDidChanged(_ textField: UITextField) {
         if textField.text!.isEmpty {
-            placemarkList.removeAll(keepCapacity: false)
+            placemarkList.removeAll(keepingCapacity: false)
             fullAddressTextField.dropDownTableView.reloadData()
             return
         }
         
-        geocoder.geocodeAddressString(textField.text!, inRegion: region, completionHandler: { (placemarks, error) -> Void in
+        geocoder.geocodeAddressString(textField.text!, in: region, completionHandler: { (placemarks, error) -> Void in
             if error != nil {
-                print(error)
+                print(error ?? "No Error Message")
             } else {
-                self.placemarkList.removeAll(keepCapacity: false)
+                self.placemarkList.removeAll(keepingCapacity: false)
                 self.placemarkList = placemarks! as [CLPlacemark]
                 self.fullAddressTextField.dropDownTableView.reloadData()
             }
         })
     }
     
-    private func formateedFullAddress(placemark: CLPlacemark) -> String {
+    fileprivate func formateedFullAddress(_ placemark: CLPlacemark) -> String {
         let lines = ABCreateStringWithAddressDictionary(placemark.addressDictionary!, false)
-        let addressString = lines.stringByReplacingOccurrencesOfString("\n", withString: ", ", options: .LiteralSearch, range: nil)
+        let addressString = lines.replacingOccurrences(of: "\n", with: ", ", options: .literal, range: nil)
         return addressString
     }
 
@@ -67,14 +66,14 @@ class MapViewDemoViewController: UIViewController {
 }
 
 extension MapViewDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int {
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int {
         return placemarkList.count
     }
     
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = dropDownTextField.dropDownTableView.dequeueReusableCellWithIdentifier("addressCell")
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell {
+        var cell = dropDownTextField.dropDownTableView.dequeueReusableCell(withIdentifier: "addressCell")
         if cell == nil {
-            cell = UITableViewCell(style: .Default, reuseIdentifier: "addressCell")
+            cell = UITableViewCell(style: .default, reuseIdentifier: "addressCell")
         }
         
         cell!.textLabel!.text = formateedFullAddress(placemarkList[indexPath.row])
@@ -83,7 +82,7 @@ extension MapViewDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
         return cell!
     }
     
-    func dropDownTextField(dropdownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func dropDownTextField(_ dropdownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: IndexPath) {
         mapView.removeAnnotations(mapView.annotations)
         
         let placeMark = placemarkList[indexPath.row]
@@ -96,14 +95,14 @@ extension MapViewDemoViewController: ZTDropDownTextFieldDataSourceDelegate {
         let annotation = MKPointAnnotation()
         annotation.coordinate = location
         annotation.title = formateedFullAddress(placeMark)
-        
+        self.fullAddressTextField.text = annotation.title
         mapView.addAnnotation(annotation)
     }
 }
 
 
 extension MapViewDemoViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return false
     }

@@ -10,28 +10,29 @@ import UIKit
 
 // MARK: Animation Style Enum
 public enum ZTDropDownAnimationStyle {
-    case Basic
-    case Slide
-    case Expand
-    case Flip
+    case basic
+    case slide
+    case expand
+    case flip
 }
+
 
 // MARK: Dropdown Delegate
-public protocol ZTDropDownTextFieldDataSourceDelegate: NSObjectProtocol {
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    func dropDownTextField(dropDownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: NSIndexPath)
+@objc public protocol ZTDropDownTextFieldDataSourceDelegate: NSObjectProtocol {
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell
+    func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: IndexPath)
 }
 
-public class ZTDropDownTextField: UITextField {
+open class ZTDropDownTextField: UITextField {
     
     // MARK: Instance Variables
-    public var dropDownTableView: UITableView!
-    public var rowHeight:CGFloat = 50
-    public var dropDownTableViewHeight: CGFloat = 150
-    public var animationStyle: ZTDropDownAnimationStyle = .Basic
-    public weak var dataSourceDelegate: ZTDropDownTextFieldDataSourceDelegate?
-    private var heightConstraint: NSLayoutConstraint!
+    open var dropDownTableView: UITableView!
+    open var rowHeight:CGFloat = 50
+    open var dropDownTableViewHeight: CGFloat = 150
+    open var animationStyle: ZTDropDownAnimationStyle = .basic
+    open weak var dataSourceDelegate: ZTDropDownTextFieldDataSourceDelegate?
+    fileprivate var heightConstraint: NSLayoutConstraint!
     
     // MARK: Init Methods
     required public init?(coder aDecoder: NSCoder) {
@@ -46,17 +47,17 @@ public class ZTDropDownTextField: UITextField {
     
     
     // MARK: Setup Methods
-    private func setupTextField() {
-        addTarget(self, action: #selector(ZTDropDownTextField.editingChanged(_:)), forControlEvents:.EditingChanged)
+    fileprivate func setupTextField() {
+        addTarget(self, action: #selector(ZTDropDownTextField.editingChanged(_:)), for:.editingChanged)
     }
     
-    private func setupTableView() {
+    fileprivate func setupTableView() {
         if dropDownTableView == nil {
             
             dropDownTableView = UITableView()
-            dropDownTableView.backgroundColor = UIColor.whiteColor()
+            dropDownTableView.backgroundColor = UIColor.white
             dropDownTableView.layer.cornerRadius = 10.0
-            dropDownTableView.layer.borderColor = UIColor.lightGrayColor().CGColor
+            dropDownTableView.layer.borderColor = UIColor.lightGray.cgColor
             dropDownTableView.layer.borderWidth = 1.0
             dropDownTableView.showsVerticalScrollIndicator = false
             dropDownTableView.delegate = self
@@ -64,16 +65,16 @@ public class ZTDropDownTextField: UITextField {
             dropDownTableView.estimatedRowHeight = rowHeight
             
             superview!.addSubview(dropDownTableView)
-            superview!.bringSubviewToFront(dropDownTableView)
+            superview!.bringSubview(toFront: dropDownTableView)
             
             dropDownTableView.translatesAutoresizingMaskIntoConstraints = false
             
-            let leftConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .Left, relatedBy: .Equal, toItem: self, attribute: .Left, multiplier: 1, constant: 0)
-            let rightConstraint =  NSLayoutConstraint(item: dropDownTableView, attribute: .Right, relatedBy: .Equal, toItem: self, attribute: .Right, multiplier: 1, constant: 0)
-            heightConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: dropDownTableViewHeight)
-            let topConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .Top, relatedBy: .Equal, toItem: self, attribute: .Bottom, multiplier: 1, constant: 1)
+            let leftConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0)
+            let rightConstraint =  NSLayoutConstraint(item: dropDownTableView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0)
+            heightConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: dropDownTableViewHeight)
+            let topConstraint = NSLayoutConstraint(item: dropDownTableView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 1)
             
-            NSLayoutConstraint.activateConstraints([leftConstraint, rightConstraint, heightConstraint, topConstraint])
+            NSLayoutConstraint.activate([leftConstraint, rightConstraint, heightConstraint, topConstraint])
             
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(ZTDropDownTextField.tapped(_:)))
             tapGesture.numberOfTapsRequired = 1
@@ -83,48 +84,48 @@ public class ZTDropDownTextField: UITextField {
         
     }
     
-    private func tableViewAppearanceChange(appear: Bool) {
+    fileprivate func tableViewAppearanceChange(_ appear: Bool) {
         switch animationStyle {
-        case .Basic:
+        case .basic:
             let basicAnimation = POPBasicAnimation(propertyNamed: kPOPViewAlpha)
-            basicAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            basicAnimation.toValue = appear ? 1 : 0
-            dropDownTableView.pop_addAnimation(basicAnimation, forKey: "basic")
-        case .Slide:
+            basicAnimation?.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            basicAnimation?.toValue = appear ? 1 : 0
+            dropDownTableView.pop_add(basicAnimation, forKey: "basic")
+        case .slide:
             let basicAnimation = POPBasicAnimation(propertyNamed: kPOPLayoutConstraintConstant)
-            basicAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            basicAnimation.toValue = appear ? dropDownTableViewHeight : 0
-            heightConstraint.pop_addAnimation(basicAnimation, forKey: "heightConstraint")
-        case .Expand:
+            basicAnimation?.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            basicAnimation?.toValue = appear ? dropDownTableViewHeight : 0
+            heightConstraint.pop_add(basicAnimation, forKey: "heightConstraint")
+        case .expand:
             let springAnimation = POPSpringAnimation(propertyNamed: kPOPViewSize)
-            springAnimation.springSpeed = dropDownTableViewHeight / 100
-            springAnimation.springBounciness = 10.0
-            let width = appear ? CGRectGetWidth(frame) : 0
+            springAnimation?.springSpeed = dropDownTableViewHeight / 100
+            springAnimation?.springBounciness = 10.0
+            let width = appear ? frame.width : 0
             let height = appear ? dropDownTableViewHeight : 0
-            springAnimation.toValue = NSValue(CGSize: CGSize(width: width, height: height))
-            dropDownTableView.pop_addAnimation(springAnimation, forKey: "expand")
-        case .Flip:
+            springAnimation?.toValue = NSValue(cgSize: CGSize(width: width, height: height))
+            dropDownTableView.pop_add(springAnimation, forKey: "expand")
+        case .flip:
             var identity = CATransform3DIdentity
             identity.m34 = -1.0/1000
-            let angle = appear ? CGFloat(0) : CGFloat(M_PI_2)
+            let angle = appear ? CGFloat(0) : CGFloat(Double.pi/2 )
             let rotationTransform = CATransform3DRotate(identity, angle, 0.0, 1.0, 0.0)
-            UIView.animateWithDuration(0.5, animations: { () -> Void in
+            UIView.animate(withDuration: 0.5, animations: { () -> Void in
                 self.dropDownTableView.layer.transform = rotationTransform
             })
         }
     }
     
     // MARK: Target Methods
-    func tapped(gesture: UIGestureRecognizer) {
-        let location = gesture.locationInView(superview)
-        if !CGRectContainsPoint(dropDownTableView.frame, location) {
+    func tapped(_ gesture: UIGestureRecognizer) {
+        let location = gesture.location(in: superview)
+        if !dropDownTableView.frame.contains(location) {
             if (dropDownTableView) != nil {
                 self.tableViewAppearanceChange(false)
             }
         }
     }
     
-    func editingChanged(textField: UITextField) {
+    func editingChanged(_ textField: UITextField) {
         if textField.text!.characters.count > 0 {
             setupTableView()
             self.tableViewAppearanceChange(true)
@@ -139,18 +140,18 @@ public class ZTDropDownTextField: UITextField {
 
 // Mark: UITableViewDataSoruce
 extension ZTDropDownTextField: UITableViewDataSource {
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.respondsToSelector(Selector("dropDownTextField:numberOfRowsInSection:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:numberOfRowsInSection:))) {
                 return dataSourceDelegate.dropDownTextField(self, numberOfRowsInSection: section)
             }
         }
         return 0
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.respondsToSelector(Selector("dropDownTextField:cellForRowAtIndexPath:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:cellForRowAtIndexPath:))) {
                 return dataSourceDelegate.dropDownTextField(self, cellForRowAtIndexPath: indexPath)
             }
         }
@@ -160,9 +161,9 @@ extension ZTDropDownTextField: UITableViewDataSource {
 
 // Mark: UITableViewDelegate
 extension ZTDropDownTextField: UITableViewDelegate {
-    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.respondsToSelector(Selector("dropDownTextField:didSelectRowAtIndexPath:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:didSelectRowAtIndexPath:))) {
                 dataSourceDelegate.dropDownTextField(self, didSelectRowAtIndexPath: indexPath)
             }
         }
