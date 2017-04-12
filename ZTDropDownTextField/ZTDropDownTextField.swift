@@ -16,8 +16,9 @@ public enum ZTDropDownAnimationStyle {
     case flip
 }
 
+
 // MARK: Dropdown Delegate
-public protocol ZTDropDownTextFieldDataSourceDelegate: NSObjectProtocol {
+@objc public protocol ZTDropDownTextFieldDataSourceDelegate: NSObjectProtocol {
     func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, numberOfRowsInSection section: Int) -> Int
     func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell
     func dropDownTextField(_ dropDownTextField: ZTDropDownTextField, didSelectRowAtIndexPath indexPath: IndexPath)
@@ -106,7 +107,7 @@ open class ZTDropDownTextField: UITextField {
         case .flip:
             var identity = CATransform3DIdentity
             identity.m34 = -1.0/1000
-            let angle = appear ? CGFloat(0) : CGFloat(M_PI_2)
+            let angle = appear ? CGFloat(0) : CGFloat(Double.pi/2 )
             let rotationTransform = CATransform3DRotate(identity, angle, 0.0, 1.0, 0.0)
             UIView.animate(withDuration: 0.5, animations: { () -> Void in
                 self.dropDownTableView.layer.transform = rotationTransform
@@ -141,7 +142,7 @@ open class ZTDropDownTextField: UITextField {
 extension ZTDropDownTextField: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.responds(to: Selector("dropDownTextField:numberOfRowsInSection:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:numberOfRowsInSection:))) {
                 return dataSourceDelegate.dropDownTextField(self, numberOfRowsInSection: section)
             }
         }
@@ -150,7 +151,7 @@ extension ZTDropDownTextField: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.responds(to: Selector("dropDownTextField:cellForRowAtIndexPath:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:cellForRowAtIndexPath:))) {
                 return dataSourceDelegate.dropDownTextField(self, cellForRowAtIndexPath: indexPath)
             }
         }
@@ -162,7 +163,7 @@ extension ZTDropDownTextField: UITableViewDataSource {
 extension ZTDropDownTextField: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let dataSourceDelegate = dataSourceDelegate {
-            if dataSourceDelegate.responds(to: Selector("dropDownTextField:didSelectRowAtIndexPath:")) {
+            if dataSourceDelegate.responds(to: #selector(ZTDropDownTextFieldDataSourceDelegate.dropDownTextField(_:didSelectRowAtIndexPath:))) {
                 dataSourceDelegate.dropDownTextField(self, didSelectRowAtIndexPath: indexPath)
             }
         }
